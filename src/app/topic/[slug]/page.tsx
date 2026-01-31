@@ -3,10 +3,24 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { curriculum } from "@/data/curriculum";
 import { getContent } from "@/data/content";
-import { getQuiz } from "@/data/quizzes";
+import { getFreeResponseQuestions } from "@/data/freeResponseQuizzes";
 import { useProgress } from "@/hooks/useProgress";
 import MarkdownContent from "@/components/MarkdownContent";
-import Quiz from "@/components/Quiz";
+import FreeResponseQuiz from "@/components/FreeResponseQuiz";
+import DeepDiveChat from "@/components/DeepDiveChat";
+
+interface GradeResult {
+  score: number;
+  feedback: string;
+}
+
+interface GradingResult {
+  grades: GradeResult[];
+  overallScore: number;
+  maxScore: number;
+  passed: boolean;
+  gaps: string[];
+}
 
 function findBySlug(slug: string) {
   for (const section of curriculum) {
@@ -28,16 +42,18 @@ function getAdjacentTopics(slug: string) {
 export default function TopicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
   const [tab, setTab] = useState<"overview" | "deepDive">("overview");
+  const [gradingResult, setGradingResult] = useState<GradingResult | null>(null);
   const { markRead, markQuizPassed, isRead, isQuizPassed } = useProgress();
 
   const found = findBySlug(slug);
   const content = found ? getContent(found.topic.id) : undefined;
-  const questions = found ? getQuiz(found.topic.id) : undefined;
+  const questions = found ? getFreeResponseQuestions(found.topic.id) : undefined;
   const { prev, next } = getAdjacentTopics(slug);
 
   // Reset tab and scroll to top on topic change
   useEffect(() => {
     setTab("overview");
+    setGradingResult(null);
     window.scrollTo(0, 0);
   }, [slug]);
 
@@ -101,20 +117,50 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-        <MarkdownContent content={tab === "overview" ? content.overview : content.deepDive} />
-      </div>
-
-      {/* Quiz */}
-      {questions && questions.length > 0 && (
+      {tab === "overview" && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-          <Quiz
-            key={topic.id}
-            questions={questions}
-            onPass={() => markQuizPassed(topic.id)}
-            alreadyPassed={isQuizPassed(topic.id)}
-          />
+          <MarkdownContent content={content.overview} />
         </div>
+      )}
+
+      {tab === "deepDive" && (
+        <>
+          {/* Quiz */}
+          {questions && questions.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+              <FreeResponseQuiz
+                key={topic.id}
+                topicId={topic.id}
+                topicTitle={topic.title}
+                topicOverview={content.overview}
+                questions={questions}
+                onPass={() => markQuizPassed(topic.id)}
+                onGraded={(result) => setGradingResult(result)}
+                alreadyPassed={isQuizPassed(topic.id)}
+              />
+            </div>
+          )}
+
+          {/* AI Deep Dive + Chat — shows after grading or if previously passed */}
+          {gradingResult && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+              <DeepDiveChat
+                topicId={topic.id}
+                topicTitle={topic.title}
+                topicOverview={content.overview}
+                topicDeepDive={content.deepDive}
+                gradingResult={gradingResult}
+              />
+            </div>
+          )}
+
+          {/* Show static deep dive as fallback if no quiz or not yet graded */}
+          {(!questions || questions.length === 0) && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+              <MarkdownContent content={content.deepDive} />
+            </div>
+          )}
+        </>
       )}
 
       {/* Navigation */}
