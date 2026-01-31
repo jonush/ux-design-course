@@ -1,95 +1,40 @@
 "use client";
 
-/**
- * Simple markdown-to-HTML renderer for lesson content.
- * Handles: ### headers, **bold**, - unordered lists, 1. ordered lists, paragraphs.
- * No external dependency needed.
- */
-export function MarkdownContent({ text }: { text: string }) {
-  const html = renderMarkdown(text);
+function renderMarkdown(text: string): string {
+  return text
+    // Headers
+    .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-2">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold text-gray-900 mt-8 mb-3">$1</h2>')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+    // Italic
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Unordered list items
+    .replace(/^- (.+)$/gm, '<li class="ml-4 pl-2 text-gray-700 leading-relaxed">$1</li>')
+    // Ordered list items
+    .replace(/^(\d+)\. (.+)$/gm, '<li class="ml-4 pl-2 text-gray-700 leading-relaxed" value="$1">$2</li>')
+    // Paragraphs: wrap non-tag lines
+    .split('\n\n')
+    .map((block) => {
+      const trimmed = block.trim();
+      if (!trimmed) return '';
+      if (trimmed.startsWith('<h') || trimmed.startsWith('<li') || trimmed.startsWith('<ul') || trimmed.startsWith('<ol')) {
+        // Wrap consecutive <li> in <ul>
+        if (trimmed.includes('<li')) {
+          return `<ul class="space-y-1 my-3 list-disc">${trimmed}</ul>`;
+        }
+        return trimmed;
+      }
+      return `<p class="text-gray-700 leading-relaxed mb-3">${trimmed.replace(/\n/g, '<br/>')}</p>`;
+    })
+    .join('\n');
+}
+
+export default function MarkdownContent({ content }: { content: string }) {
   return (
     <div
       className="prose-custom"
-      dangerouslySetInnerHTML={{ __html: html }}
+      dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
     />
   );
-}
-
-function renderMarkdown(md: string): string {
-  const lines = md.split("\n");
-  const out: string[] = [];
-  let inUl = false;
-  let inOl = false;
-
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
-
-    // Close lists if line doesn't continue them
-    if (inUl && !line.match(/^- /)) {
-      out.push("</ul>");
-      inUl = false;
-    }
-    if (inOl && !line.match(/^\d+\.\s/)) {
-      out.push("</ol>");
-      inOl = false;
-    }
-
-    // Headers
-    if (line.startsWith("### ")) {
-      out.push(`<h3>${inline(line.slice(4))}</h3>`);
-      continue;
-    }
-    if (line.startsWith("## ")) {
-      out.push(`<h2>${inline(line.slice(3))}</h2>`);
-      continue;
-    }
-
-    // Unordered list
-    if (line.match(/^- /)) {
-      if (!inUl) {
-        out.push("<ul>");
-        inUl = true;
-      }
-      out.push(`<li>${inline(line.slice(2))}</li>`);
-      continue;
-    }
-
-    // Ordered list
-    const olMatch = line.match(/^(\d+)\.\s(.+)/);
-    if (olMatch) {
-      if (!inOl) {
-        out.push("<ol>");
-        inOl = true;
-      }
-      out.push(`<li>${inline(olMatch[2])}</li>`);
-      continue;
-    }
-
-    // Empty line
-    if (line.trim() === "") {
-      continue;
-    }
-
-    // Paragraph
-    out.push(`<p>${inline(line)}</p>`);
-  }
-
-  if (inUl) out.push("</ul>");
-  if (inOl) out.push("</ol>");
-
-  return out.join("\n");
-}
-
-function inline(text: string): string {
-  // Bold
-  text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  // Italic
-  text = text.replace(/\*(.+?)\*/g, "<em>$1</em>");
-  // Inline code
-  text = text.replace(/`(.+?)`/g, "<code>$1</code>");
-  // Links
-  text = text.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-  // Em dash
-  text = text.replace(/ — /g, " — ");
-  return text;
 }
