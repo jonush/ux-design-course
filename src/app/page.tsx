@@ -41,6 +41,14 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Getting Started */}
+      {readCount === 0 && (
+        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 text-center">
+          <p className="text-indigo-900 font-medium text-lg mb-1">Welcome! 👋</p>
+          <p className="text-indigo-700 text-sm">Pick any topic below to start learning. Your progress is saved automatically in your browser.</p>
+        </div>
+      )}
+
       {/* Sections */}
       {curriculum.map((section) => {
         const sectionRead = section.topics.filter((t) => isRead(t.id)).length;

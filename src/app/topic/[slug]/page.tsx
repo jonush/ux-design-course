@@ -35,6 +35,12 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
   const questions = found ? getQuiz(found.topic.id) : undefined;
   const { prev, next } = getAdjacentTopics(slug);
 
+  // Reset tab and scroll to top on topic change
+  useEffect(() => {
+    setTab("overview");
+    window.scrollTo(0, 0);
+  }, [slug]);
+
   useEffect(() => {
     if (found) markRead(found.topic.id);
   }, [found, markRead]);
@@ -103,6 +109,7 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
       {questions && questions.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
           <Quiz
+            key={topic.id}
             questions={questions}
             onPass={() => markQuizPassed(topic.id)}
             alreadyPassed={isQuizPassed(topic.id)}
