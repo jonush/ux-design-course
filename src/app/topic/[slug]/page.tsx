@@ -158,24 +158,24 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
               {gradingResult && !gradingResult.passed && (
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
                   <div className="flex items-start gap-4">
-                    <div className="text-3xl">🤖</div>
+                    <div className="text-3xl">🎯</div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-blue-900 mb-2">Unlock AI-Powered Deep Dive</h3>
+                      <h3 className="text-lg font-semibold text-blue-900 mb-2">Unlock Personalized Learning</h3>
                       <p className="text-blue-700 mb-4">
-                        Configure your Anthropic API key to get personalized explanations, 
-                        interactive discussions, and targeted learning recommendations based on your quiz performance.
+                        Enable adaptive learning features to get explanations tailored to your understanding, 
+                        interactive discussions, and content that adjusts to your learning style and progress.
                       </p>
                       <div className="bg-blue-100 rounded-lg p-4 mb-4">
-                        <h4 className="text-sm font-medium text-blue-800 mb-2">Preview: What You'll Get</h4>
+                        <h4 className="text-sm font-medium text-blue-800 mb-2">Preview: What You'll Unlock</h4>
                         <div className="text-sm text-blue-600">
-                          <MarkdownContent content={content.deepDive.split('\n').slice(0, 8).join('\n') + "\n\n*...and much more with personalized AI guidance!*"} />
+                          <MarkdownContent content={content.deepDive.split('\n').slice(0, 8).join('\n') + "\n\n*...and much more with personalized content just for you!*"} />
                         </div>
                       </div>
                       <button
                         onClick={openSettings}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                       >
-                        Set Up API Key
+                        Enable Personal Learning
                       </button>
                     </div>
                   </div>
@@ -189,7 +189,7 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
       {/* AI Deep Dive Chat - Shows after successful quiz */}
       {gradingResult && gradingResult.passed && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI Deep Dive Chat</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">💬 Interactive Learning Chat</h2>
           <DeepDiveChat
             topicId={topic.id}
             topicTitle={topic.title}

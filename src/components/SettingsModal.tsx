@@ -77,11 +77,11 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           {/* API Key Section */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              Anthropic API Key
+              Personalized Learning
             </label>
             <p className="text-sm text-gray-500 mb-3">
-              This app uses Claude AI to grade your quiz responses and generate personalized
-              learning content. You&apos;ll need an Anthropic API key to use these features.
+              Unlock an adaptive learning experience tailored to your understanding and learning style. 
+              Get personalized explanations, interactive discussions, and content that adjusts to help you master UX design concepts.
             </p>
 
             {isKeySet && !inputKey.startsWith(apiKey?.slice(0, 10) || "") ? (
@@ -141,19 +141,19 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           {/* Help Section */}
           <div className="pt-4 border-t border-gray-100">
             <p className="text-xs text-gray-500">
-              Don&apos;t have an API key?{" "}
+              Need an Anthropic API key?{" "}
               <a
                 href="https://console.anthropic.com/settings/keys"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-indigo-600 hover:text-indigo-800 underline"
               >
-                Get one from Anthropic →
+                Get one here →
               </a>
             </p>
             <p className="text-xs text-gray-400 mt-2">
-              Your API key is stored locally in your browser and is only sent
-              directly to Anthropic&apos;s API. It never touches our servers.
+              Your key enables personalized learning features and is stored securely 
+              in your browser. It&apos;s only used to enhance your learning experience.
             </p>
           </div>
         </div>
