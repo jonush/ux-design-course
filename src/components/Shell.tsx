@@ -28,7 +28,16 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                 className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Settings"
               >
-                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24"
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <circle cx="12" cy="12" r="3"/>
                   <path d="M12 1v6m0 6v6"/>
                   <path d="m15.98 7.5 3.25-3.25M4.77 4.77l3.25 3.25"/>
