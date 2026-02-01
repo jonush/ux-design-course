@@ -9,7 +9,7 @@ interface FreeResponseQuestion {
 // Map of topicId -> custom free response questions
 // Focus on Phase 1 (foundational) topics from curriculum
 const customQuestions: Record<string, FreeResponseQuestion[]> = {
-  // === SECTION 1: Human Decision Making (Foundational) ===
+  // === SECTION 1: Human Decision Making (CORE) ===
   "bj-foggs-behavior-model": [
     {
       question: "A climate action app launched with great fanfare but 90% of users who download it never complete a single action. The team is debating whether to fix motivation (better messaging about urgency), ability (simpler actions), or prompts (better notifications). Using B=MAP, analyze why this type of behavioral failure pattern occurs and design a systematic diagnostic approach to identify the true bottleneck. What would success look like at each level?",
@@ -111,7 +111,7 @@ const customQuestions: Record<string, FreeResponseQuestion[]> = {
     },
   ],
 
-  // === SECTION 2: Behavior Change Strategies (Foundational) ===
+  // === SECTION 2: Behavior Change Strategies (CORE) ===
   "bj-foggs-behavior-grid": [
     {
       question: "A smoking cessation app targets 'Black Path' behavior (stop a permanent behavior)—the hardest cell in Fogg's grid. What makes this so difficult, and what strategies are specifically suited to this type of behavior change?",
@@ -289,7 +289,7 @@ const customQuestions: Record<string, FreeResponseQuestion[]> = {
     },
   ],
 
-  // === SECTION 3: Understanding the Product (Foundational) ===
+  // === SECTION 3: Understanding the Product (CORE) ===
   "target-outcome": [
     {
       question: "A startup says their goal is to 'make the best task management app.' Transform this into a proper target outcome that's specific, measurable, and connects user behavior to business results.",

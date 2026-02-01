@@ -60,7 +60,7 @@ export default function Home() {
             <div className="flex items-center gap-3">
               <h2 className="text-xl font-semibold text-gray-900">{section.title}</h2>
               {section.foundational && (
-                <span className="text-xs font-medium bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Foundational</span>
+                <span className="text-xs font-medium bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">CORE</span>
               )}
               <span className="text-xs text-gray-400 ml-auto">{sectionRead}/{sectionTotal} read · {sectionPassed}/{sectionTotal} passed</span>
             </div>

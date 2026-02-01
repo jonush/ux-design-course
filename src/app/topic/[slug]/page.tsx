@@ -90,7 +90,7 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
       <div>
         <div className="flex items-center gap-3 mb-2">
           {section.foundational && (
-            <span className="text-xs font-medium bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Foundational</span>
+            <span className="text-xs font-medium bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">CORE</span>
           )}
           {isRead(topic.id) && (
             <span className="text-xs font-medium bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full">Read</span>
