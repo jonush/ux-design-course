@@ -4,7 +4,11 @@ import { usePathname } from "next/navigation";
 import { curriculum } from "@/data/curriculum";
 import { useProgress } from "@/hooks/useProgress";
 
-export default function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function Sidebar({ open, onClose, onSettingsClick }: { 
+  open: boolean; 
+  onClose: () => void; 
+  onSettingsClick: () => void;
+}) {
   const pathname = usePathname();
   const { isRead, isQuizPassed } = useProgress();
 
@@ -17,39 +21,60 @@ export default function Sidebar({ open, onClose }: { open: boolean; onClose: () 
             UX Design Course
           </Link>
         </div>
-        <nav className="p-4 space-y-5">
-          {curriculum.map((section) => (
-            <div key={section.id}>
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">{section.title}</h3>
-                {section.foundational && (
-                  <span className="text-[10px] font-medium bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Core</span>
-                )}
+        <nav className="flex flex-col h-full">
+          <div className="p-4 space-y-5 flex-1">
+            {curriculum.map((section) => (
+              <div key={section.id}>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">{section.title}</h3>
+                  {section.foundational && (
+                    <span className="text-[10px] font-medium bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Core</span>
+                  )}
+                </div>
+                <ul className="space-y-0.5">
+                  {section.topics.map((topic) => {
+                    const href = `/topic/${topic.slug}`;
+                    const active = pathname === href;
+                    const read = isRead(topic.id);
+                    const passed = isQuizPassed(topic.id);
+                    return (
+                      <li key={topic.id}>
+                        <Link
+                          href={href}
+                          onClick={onClose}
+                          className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${active ? "bg-indigo-50 text-indigo-700 font-medium" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
+                        >
+                          <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 text-[9px] ${passed ? "bg-green-500 border-green-500 text-white" : read ? "bg-indigo-100 border-indigo-400 text-indigo-600" : "border-gray-300"}`}>
+                            {passed ? "✓" : read ? "•" : ""}
+                          </span>
+                          <span className="truncate">{topic.title}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
-              <ul className="space-y-0.5">
-                {section.topics.map((topic) => {
-                  const href = `/topic/${topic.slug}`;
-                  const active = pathname === href;
-                  const read = isRead(topic.id);
-                  const passed = isQuizPassed(topic.id);
-                  return (
-                    <li key={topic.id}>
-                      <Link
-                        href={href}
-                        onClick={onClose}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors ${active ? "bg-indigo-50 text-indigo-700 font-medium" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`}
-                      >
-                        <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 text-[9px] ${passed ? "bg-green-500 border-green-500 text-white" : read ? "bg-indigo-100 border-indigo-400 text-indigo-600" : "border-gray-300"}`}>
-                          {passed ? "✓" : read ? "•" : ""}
-                        </span>
-                        <span className="truncate">{topic.title}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
+            ))}
+          </div>
+          
+          {/* Settings Button */}
+          <div className="p-4 border-t border-gray-200">
+            <button
+              onClick={() => {
+                onSettingsClick();
+                onClose();
+              }}
+              className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 1v6m0 6v6"/>
+                <path d="m15.98 7.5 3.25-3.25M4.77 4.77l3.25 3.25"/>
+                <path d="m15.98 16.5 3.25 3.25M4.77 19.23l3.25-3.25"/>
+              </svg>
+              Settings
+            </button>
+          </div>
         </nav>
       </aside>
     </>

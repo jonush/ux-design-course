@@ -41,8 +41,8 @@ function getAdjacentTopics(slug: string) {
 
 export default function TopicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const [tab, setTab] = useState<"overview" | "deepDive">("overview");
   const [gradingResult, setGradingResult] = useState<GradingResult | null>(null);
+  const [showQuiz, setShowQuiz] = useState(false);
   const { markRead, markQuizPassed, isRead, isQuizPassed } = useProgress();
 
   const found = findBySlug(slug);
@@ -50,10 +50,10 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
   const questions = found ? getFreeResponseQuestions(found.topic.id) : undefined;
   const { prev, next } = getAdjacentTopics(slug);
 
-  // Reset tab and scroll to top on topic change
+  // Reset state and scroll to top on topic change
   useEffect(() => {
-    setTab("overview");
     setGradingResult(null);
+    setShowQuiz(false);
     window.scrollTo(0, 0);
   }, [slug]);
 
@@ -71,6 +71,7 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
   }
 
   const { section, topic } = found;
+  const hasQuiz = questions && questions.length > 0;
 
   return (
     <div className="space-y-8">
@@ -100,67 +101,92 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
         <p className="text-sm text-gray-400 mt-1">{section.title}</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
-        <button
-          onClick={() => setTab("overview")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tab === "overview" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setTab("deepDive")}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tab === "deepDive" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-        >
-          Deep Dive
-        </button>
+      {/* Overview Content */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Overview</h2>
+        <MarkdownContent content={content.overview} />
       </div>
 
-      {/* Content */}
-      {tab === "overview" && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-          <MarkdownContent content={content.overview} />
+      {/* Quiz Section */}
+      {hasQuiz && (
+        <div className="space-y-6">
+          {!showQuiz && !isQuizPassed(topic.id) && !gradingResult && (
+            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-6 text-center">
+              <div className="text-2xl mb-2">📝</div>
+              <h3 className="text-lg font-semibold text-indigo-900 mb-2">Test Your Understanding</h3>
+              <p className="text-indigo-700 mb-4">Ready to apply what you've learned? Take the quiz to unlock personalized deep dive content.</p>
+              <button
+                onClick={() => setShowQuiz(true)}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Start Quiz
+              </button>
+            </div>
+          )}
+
+          {(showQuiz || isQuizPassed(topic.id) || gradingResult) && (
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Reference Content Sidebar */}
+              <div className="lg:col-span-1 space-y-4">
+                <div className="sticky top-8">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3">📚 Reference Materials</h3>
+                  
+                  {/* Quick Overview */}
+                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h4 className="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2">Key Concepts</h4>
+                    <div className="text-sm text-gray-600 space-y-2">
+                      <MarkdownContent content={content.overview} />
+                    </div>
+                  </div>
+
+                  {/* Deep Dive Preview */}
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <h4 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">Deep Dive Preview</h4>
+                    <div className="text-sm text-blue-600">
+                      <MarkdownContent content={content.deepDive.split('\n').slice(0, 10).join('\n') + "..."} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quiz Content */}
+              <div className="lg:col-span-2">
+                <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+                  <FreeResponseQuiz
+                    key={topic.id}
+                    topicId={topic.id}
+                    topicTitle={topic.title}
+                    topicOverview={content.overview}
+                    topicDeepDive={content.deepDive}
+                    questions={questions}
+                    onPass={() => markQuizPassed(topic.id)}
+                    onGraded={(result) => setGradingResult(result)}
+                    alreadyPassed={isQuizPassed(topic.id)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {tab === "deepDive" && (
-        <>
-          {/* Quiz */}
-          {questions && questions.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-              <FreeResponseQuiz
-                key={topic.id}
-                topicId={topic.id}
-                topicTitle={topic.title}
-                topicOverview={content.overview}
-                questions={questions}
-                onPass={() => markQuizPassed(topic.id)}
-                onGraded={(result) => setGradingResult(result)}
-                alreadyPassed={isQuizPassed(topic.id)}
-              />
-            </div>
+      {/* Deep Dive Content */}
+      {(!hasQuiz || gradingResult || isQuizPassed(topic.id)) && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Deep Dive</h2>
+          
+          {gradingResult ? (
+            <DeepDiveChat
+              topicId={topic.id}
+              topicTitle={topic.title}
+              topicOverview={content.overview}
+              topicDeepDive={content.deepDive}
+              gradingResult={gradingResult}
+            />
+          ) : (
+            <MarkdownContent content={content.deepDive} />
           )}
-
-          {/* AI Deep Dive + Chat — shows after grading or if previously passed */}
-          {gradingResult && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-              <DeepDiveChat
-                topicId={topic.id}
-                topicTitle={topic.title}
-                topicOverview={content.overview}
-                topicDeepDive={content.deepDive}
-                gradingResult={gradingResult}
-              />
-            </div>
-          )}
-
-          {/* Show static deep dive as fallback if no quiz or not yet graded */}
-          {(!questions || questions.length === 0) && (
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-              <MarkdownContent content={content.deepDive} />
-            </div>
-          )}
-        </>
+        </div>
       )}
 
       {/* Navigation */}

@@ -18,6 +18,7 @@ interface FreeResponseQuizProps {
   topicId: string;
   topicTitle: string;
   topicOverview: string;
+  topicDeepDive?: string;
   questions: string[];
   onPass: () => void;
   onGraded: (result: GradingResult) => void;
@@ -27,6 +28,7 @@ interface FreeResponseQuizProps {
 export default function FreeResponseQuiz({
   topicTitle,
   topicOverview,
+  topicDeepDive,
   questions,
   onPass,
   onGraded,
@@ -63,6 +65,7 @@ export default function FreeResponseQuiz({
         body: JSON.stringify({
           topicTitle,
           topicOverview,
+          topicDeepDive,
           questions,
           answers,
         }),
