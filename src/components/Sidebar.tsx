@@ -56,10 +56,10 @@ export default function Sidebar({ open, onClose, onSettingsClick }: {
                 <div key={section.id}>
                   <button
                     onClick={() => toggleSection(section.id)}
-                    className="flex items-center gap-2 mb-2 w-full text-left group hover:bg-gray-50 -mx-2 px-2 py-1 rounded transition-colors"
+                    className={`flex items-center gap-2 mb-2 w-full text-left group hover:bg-gray-50 -mx-2 px-2 py-1 rounded transition-colors ${isExpanded ? 'bg-gray-50' : ''}`}
                   >
                     <svg 
-                      className={`w-3 h-3 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                      className={`w-3 h-3 transition-all duration-200 ${isExpanded ? 'rotate-90 text-gray-600' : 'text-gray-400'}`}
                       viewBox="0 0 24 24"
                       fill="none" 
                       stroke="currentColor" 
@@ -69,7 +69,7 @@ export default function Sidebar({ open, onClose, onSettingsClick }: {
                     >
                       <path d="M9 18l6-6-6-6"/>
                     </svg>
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 group-hover:text-gray-600">{section.title}</h3>
+                    <h3 className={`text-xs font-semibold uppercase tracking-wider transition-colors ${isExpanded ? 'text-gray-700 font-bold' : 'text-gray-400'} group-hover:text-gray-600`}>{section.title}</h3>
                     {section.foundational && (
                       <span className="text-[10px] font-medium bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">Core</span>
                     )}
