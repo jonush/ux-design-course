@@ -8,6 +8,7 @@ import { useProgress } from "@/hooks/useProgress";
 import MarkdownContent from "@/components/MarkdownContent";
 import FreeResponseQuiz from "@/components/FreeResponseQuiz";
 import DeepDiveChat from "@/components/DeepDiveChat";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface GradeResult {
   score: number;
@@ -44,6 +45,7 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
   const [gradingResult, setGradingResult] = useState<GradingResult | null>(null);
   const [showQuiz, setShowQuiz] = useState(false);
   const { markRead, markQuizPassed, isRead, isQuizPassed } = useProgress();
+  const { openSettings } = useSettings();
 
   const found = findBySlug(slug);
   const content = found ? getContent(found.topic.id) : undefined;
@@ -170,7 +172,7 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
                         </div>
                       </div>
                       <button
-                        onClick={() => {/* Settings modal will be triggered from parent */}}
+                        onClick={openSettings}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
                       >
                         Set Up API Key
