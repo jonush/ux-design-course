@@ -15,14 +15,14 @@ export default function Sidebar({ open, onClose, onSettingsClick }: {
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/30 z-30 lg:hidden" onClick={onClose} />}
-      <aside className={`fixed top-0 left-0 z-40 h-full w-72 bg-white border-r border-gray-200 overflow-y-auto transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto ${open ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="p-5 border-b border-gray-100">
+      <aside className={`fixed top-0 left-0 z-40 h-screen w-72 bg-white border-r border-gray-200 transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto ${open ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className="p-5 border-b border-gray-100 flex-shrink-0">
           <Link href="/" className="text-lg font-bold text-gray-900 hover:text-indigo-600 transition-colors" onClick={onClose}>
             UX Design Course
           </Link>
         </div>
         <nav className="flex flex-col h-full">
-          <div className="p-4 space-y-5 flex-1">
+          <div className="p-4 space-y-5 flex-1 overflow-y-auto">
             {curriculum.map((section) => (
               <div key={section.id}>
                 <div className="flex items-center gap-2 mb-2">
@@ -58,7 +58,7 @@ export default function Sidebar({ open, onClose, onSettingsClick }: {
           </div>
           
           {/* Settings Button */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-200 flex-shrink-0">
             <button
               onClick={() => {
                 onSettingsClick();
