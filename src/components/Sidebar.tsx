@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { curriculum } from "@/data/curriculum";
 import { useProgress } from "@/hooks/useProgress";
 
@@ -13,8 +13,19 @@ export default function Sidebar({ open, onClose, onSettingsClick }: {
   const pathname = usePathname();
   const { isRead, isQuizPassed } = useProgress();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(curriculum.map(section => section.id)) // All sections expanded by default
+    new Set() // All sections collapsed by default
   );
+
+  // Auto-expand section containing current topic
+  useEffect(() => {
+    const currentSlug = pathname.replace('/topic/', '');
+    for (const section of curriculum) {
+      if (section.topics.some(topic => topic.slug === currentSlug)) {
+        setExpandedSections(prev => new Set([...prev, section.id]));
+        break;
+      }
+    }
+  }, [pathname]);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections(prev => {
@@ -49,10 +60,12 @@ export default function Sidebar({ open, onClose, onSettingsClick }: {
                   >
                     <svg 
                       className={`w-3 h-3 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                      viewBox="0 0 24 24"
                       fill="none" 
                       stroke="currentColor" 
                       strokeWidth="2" 
                       strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
                       <path d="M9 18l6-6-6-6"/>
                     </svg>
