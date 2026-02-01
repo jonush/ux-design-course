@@ -101,10 +101,21 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
         <p className="text-sm text-gray-400 mt-1">{section.title}</p>
       </div>
 
-      {/* Overview Content */}
+      {/* Overview + Deep Dive Content */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Overview</h2>
-        <MarkdownContent content={content.overview} />
+        <h2 className="text-lg font-semibold text-gray-900 mb-6">Learning Content</h2>
+        
+        {/* Overview Section */}
+        <div className="mb-8">
+          <h3 className="text-base font-medium text-gray-800 mb-3">Overview</h3>
+          <MarkdownContent content={content.overview} />
+        </div>
+        
+        {/* Deep Dive Section */}
+        <div>
+          <h3 className="text-base font-medium text-gray-800 mb-3">Deep Dive</h3>
+          <MarkdownContent content={content.deepDive} />
+        </div>
       </div>
 
       {/* Quiz Section */}
@@ -125,67 +136,65 @@ export default function TopicPage({ params }: { params: Promise<{ slug: string }
           )}
 
           {(showQuiz || isQuizPassed(topic.id) || gradingResult) && (
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Reference Content Sidebar */}
-              <div className="lg:col-span-1 space-y-4">
-                <div className="sticky top-8">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">📚 Reference Materials</h3>
-                  
-                  {/* Quick Overview */}
-                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                    <h4 className="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2">Key Concepts</h4>
-                    <div className="text-sm text-gray-600 space-y-2">
-                      <MarkdownContent content={content.overview} />
-                    </div>
-                  </div>
-
-                  {/* Deep Dive Preview */}
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="text-xs font-medium text-blue-700 uppercase tracking-wider mb-2">Deep Dive Preview</h4>
-                    <div className="text-sm text-blue-600">
-                      <MarkdownContent content={content.deepDive.split('\n').slice(0, 10).join('\n') + "..."} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
+            <div className="space-y-6">
               {/* Quiz Content */}
-              <div className="lg:col-span-2">
-                <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-                  <FreeResponseQuiz
-                    key={topic.id}
-                    topicId={topic.id}
-                    topicTitle={topic.title}
-                    topicOverview={content.overview}
-                    topicDeepDive={content.deepDive}
-                    questions={questions}
-                    onPass={() => markQuizPassed(topic.id)}
-                    onGraded={(result) => setGradingResult(result)}
-                    alreadyPassed={isQuizPassed(topic.id)}
-                  />
-                </div>
+              <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
+                <FreeResponseQuiz
+                  key={topic.id}
+                  topicId={topic.id}
+                  topicTitle={topic.title}
+                  topicOverview={content.overview}
+                  topicDeepDive={content.deepDive}
+                  questions={questions}
+                  onPass={() => markQuizPassed(topic.id)}
+                  onGraded={(result) => setGradingResult(result)}
+                  alreadyPassed={isQuizPassed(topic.id)}
+                />
               </div>
+
+              {/* Deep Dive Preview - Motivate API Key Setup */}
+              {gradingResult && !gradingResult.passed && (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="text-3xl">🤖</div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-blue-900 mb-2">Unlock AI-Powered Deep Dive</h3>
+                      <p className="text-blue-700 mb-4">
+                        Configure your Anthropic API key to get personalized explanations, 
+                        interactive discussions, and targeted learning recommendations based on your quiz performance.
+                      </p>
+                      <div className="bg-blue-100 rounded-lg p-4 mb-4">
+                        <h4 className="text-sm font-medium text-blue-800 mb-2">Preview: What You'll Get</h4>
+                        <div className="text-sm text-blue-600">
+                          <MarkdownContent content={content.deepDive.split('\n').slice(0, 8).join('\n') + "\n\n*...and much more with personalized AI guidance!*"} />
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => {/* Settings modal will be triggered from parent */}}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                      >
+                        Set Up API Key
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
       )}
 
-      {/* Deep Dive Content */}
-      {(!hasQuiz || gradingResult || isQuizPassed(topic.id)) && (
+      {/* AI Deep Dive Chat - Shows after successful quiz */}
+      {gradingResult && gradingResult.passed && (
         <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Deep Dive</h2>
-          
-          {gradingResult ? (
-            <DeepDiveChat
-              topicId={topic.id}
-              topicTitle={topic.title}
-              topicOverview={content.overview}
-              topicDeepDive={content.deepDive}
-              gradingResult={gradingResult}
-            />
-          ) : (
-            <MarkdownContent content={content.deepDive} />
-          )}
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">🤖 AI Deep Dive Chat</h2>
+          <DeepDiveChat
+            topicId={topic.id}
+            topicTitle={topic.title}
+            topicOverview={content.overview}
+            topicDeepDive={content.deepDive}
+            gradingResult={gradingResult}
+          />
         </div>
       )}
 
