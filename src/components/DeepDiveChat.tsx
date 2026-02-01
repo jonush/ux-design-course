@@ -130,12 +130,7 @@ export default function DeepDiveChat({
     }
   }, [topicTitle, topicOverview, topicDeepDive, gradingResult]);
 
-  // Generate deep dive on mount if no saved chat
-  useEffect(() => {
-    if (messages.length === 0 && !hasGenerated.current) {
-      generateDeepDive();
-    }
-  }, [messages.length, generateDeepDive]);
+  // Manual generation only - removed automatic generation for cost control
 
   const sendMessage = async () => {
     if (!userInput.trim() || sending) return;
@@ -194,7 +189,7 @@ export default function DeepDiveChat({
     setMessages([]);
     hasGenerated.current = false;
     localStorage.removeItem(CHAT_STORAGE_PREFIX + topicId);
-    generateDeepDive();
+    // Manual regeneration - user must click button
   };
 
   return (
@@ -207,6 +202,25 @@ export default function DeepDiveChat({
           </button>
         )}
       </div>
+
+      {/* Manual Deep Dive Generation Button */}
+      {messages.length === 0 && !generating && (
+        <div className="text-center py-8">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+            <div className="text-3xl mb-3">🧠</div>
+            <h4 className="text-lg font-semibold text-blue-900 mb-2">Ready for Personalized Learning?</h4>
+            <p className="text-blue-700 mb-4 text-sm">
+              Generate content tailored to your quiz performance and learning gaps
+            </p>
+            <button
+              onClick={generateDeepDive}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            >
+              Generate Personalized Deep Dive
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
