@@ -14,7 +14,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     <SettingsProvider onOpenSettings={openSettings}>
       <div className="flex min-h-screen bg-gray-50">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} onSettingsClick={openSettings} />
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 lg:ml-72">
           <header className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b border-gray-200 lg:hidden">
             <div className="flex items-center justify-between h-14 px-4">
               <div className="flex items-center">

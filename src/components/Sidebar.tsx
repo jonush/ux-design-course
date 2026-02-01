@@ -42,7 +42,7 @@ export default function Sidebar({ open, onClose, onSettingsClick }: {
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/30 z-30 lg:hidden" onClick={onClose} />}
-      <aside className={`fixed top-0 left-0 z-40 h-screen w-72 bg-white border-r border-gray-200 transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto flex flex-col ${open ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed top-0 left-0 z-40 h-screen w-72 bg-white border-r border-gray-200 transform transition-transform duration-200 lg:translate-x-0 flex flex-col ${open ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-5 border-b border-gray-100 flex-shrink-0">
           <Link href="/" className="text-lg font-bold text-gray-900 hover:text-indigo-600 transition-colors" onClick={onClose}>
             UX Design Course
